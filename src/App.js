@@ -12,16 +12,27 @@ class App extends Component {
     this.state = {campers: [], allTimeRanking: true  }
   }
 
-  componentDidMount() {
-
+  fetchCampers() {
     axios.get(`https://fcctop100.herokuapp.com/api/fccusers/top/${this.state.allTimeRanking ? 'alltime' : 'recent' }`)
       .then(
         res => {
           const campers = res.data
-          this.setState({ campers })
+          this.setState({ campers: campers})
         }
       )
       .catch(err => {console.log(err)})
+  }
+
+  handleOnClick = () => {
+    this.state.allTimeRanking ? this.setState({allTimeRanking: false}) : this.setState({allTimeRanking: true})
+
+    this.fetchCampers()
+
+    this.forceUpdate()
+  }
+
+  componentDidMount() {
+    this.fetchCampers()
   }
 
   render() {
@@ -36,8 +47,8 @@ class App extends Component {
                 <th>#</th>
                 <th>Avatar</th>
                 <th>Username</th>
-                <th>Points in last 30 days</th>
-                <th>All time Points</th>
+                <th onClick={this.handleOnClick}>Points in last 30 days</th>
+                <th onClick={this.handleOnClick}>All time Points</th>
             </tr>
           </thead>
 
